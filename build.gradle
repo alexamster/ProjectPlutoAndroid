@@ -3,12 +3,14 @@
 buildscript {
     repositories {
         jcenter()
+        maven { url "https://jitpack.io" }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.0.0-alpha3'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        // NOTE: Get latest version from github to avoid:
+        // Error:Cause: com.android.sdklib.repository.FullRevision
+        // https://github.com/JakeWharton/sdk-manager-plugin/pull/100
+        classpath 'com.github.JakeWharton:sdk-manager-plugin:e05218601b1274ea0721e13b33a426f641156f69'
     }
 }
 
