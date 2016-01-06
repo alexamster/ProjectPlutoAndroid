@@ -3,7 +3,9 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    // sdkmanager has problems downloading 23.0.2
+    // https://github.com/JakeWharton/sdk-manager-plugin/issues/101
+    buildToolsVersion "23.0.1"
 
     defaultConfig {
         applicationId "com.projectpluto.projectplutoandroid"
