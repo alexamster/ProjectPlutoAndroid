@@ -1,0 +1,18 @@
+# Downloading dependencies via the sdkmanager gradle plugin allows build tools to be defined in one
+# place, app/build.gradle. This avoids duplicating those version definitions in the travis
+# config. The tools travis provides when using "language: android" are out of date and cause the
+# sdkmanager plugin to fail, so we will just use the java language VM.
+language: java
+
+before_install:
+ - chmod +x gradlew
+# travis provides 64 bit VM, aapt is 32 bit
+# https://github.com/JakeWharton/sdk-manager-plugin/issues/13
+ - sudo apt-get update -qq
+ - sudo apt-get install -qq libstdc++6:i386 lib32z1 expect
+
+# no install step required, everything is handled in script.
+install: true
+
+script:
+ - ./gradlew lint assembleDebug
