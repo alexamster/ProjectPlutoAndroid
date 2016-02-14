@@ -31,7 +31,7 @@ public class BluetoothService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Timber.i("onStartCommand() intent: " + intent + " flags: " + flags + " startId: " + startId);
+        Timber.i("onStartCommand() intent: %s flags: %d startId: %d", intent, flags, startId);
 
         if (!Permissions.hasCoarseLocation(BluetoothService.this)) {
             Timber.e("App does not have permission ACCESS_COARSE_LOCATION, stopping service");
