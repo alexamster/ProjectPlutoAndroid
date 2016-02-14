@@ -15,4 +15,4 @@ before_install:
 install: true
 
 script:
- - ./gradlew lint assembleDebug
+ - ./gradlew lint test assembleDebug
