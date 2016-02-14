@@ -11,10 +11,7 @@ public class Permissions {
      * scan.
      */
     public static boolean hasCoarseLocation(Context con) {
-        if (PackageManager.PERMISSION_GRANTED != ContextCompat.checkSelfPermission(con,
-                Manifest.permission.ACCESS_COARSE_LOCATION)) {
-            return false;
-        }
-        return true;
+        return PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(con,
+                Manifest.permission.ACCESS_COARSE_LOCATION);
     }
 }
