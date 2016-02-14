@@ -21,8 +21,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     // Always show the result of every unit test, even if it passes.
     testOptions.unitTests.all {
+        // bug in java 7 causes powermock to fail unless we use -noverify flag for tests.
+        // https://github.com/jayway/powermock/issues/375
+        jvmArgs "-noverify"
         testLogging {
             events 'passed', 'skipped', 'failed'
         }
