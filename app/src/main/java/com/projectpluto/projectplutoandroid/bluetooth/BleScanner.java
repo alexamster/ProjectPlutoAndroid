@@ -43,7 +43,7 @@ public class BleScanner {
     protected ScanCallback mScanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
-            Timber.d("Received scan result for device: " + result.getDevice().getName());
+            Timber.d("Received scan result for device: %s", result.getDevice().getName());
             mScanResultSet.add(result);
             mBus.post(new ScanResultEvent(mScanResultSet));
         }
@@ -56,7 +56,7 @@ public class BleScanner {
 
         @Override
         public void onScanFailed(int errorCode) {
-            Timber.e("Bluetooth scan failed with error code: " + errorCode);
+            Timber.e("Bluetooth scan failed with error code: %d", errorCode);
             mBus.post(new ScanFailureEvent(errorCode));
         }
     };
