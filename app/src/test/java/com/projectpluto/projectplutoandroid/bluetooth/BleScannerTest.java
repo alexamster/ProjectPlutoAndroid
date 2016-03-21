@@ -35,6 +35,7 @@ public class BleScannerTest extends TestCase {
 
     protected void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
+        // mock out the bluetooth services, otherwise we will get NPE in BleScanner constructor
         when(mContext.getSystemService(Context.BLUETOOTH_SERVICE)).thenReturn(mBtManager);
         when(mBtManager.getAdapter()).thenReturn(mBtAdapter);
         when(mBtAdapter.getBluetoothLeScanner()).thenReturn(mAndroidScanner);
@@ -57,7 +58,6 @@ public class BleScannerTest extends TestCase {
         assertTrue(event.getValue().results.contains(result));
     }
 
-
     @Test
     public void testScanError() throws Exception {
         ArgumentCaptor<BleScanner.ScanFailureEvent> event
@@ -70,14 +70,12 @@ public class BleScannerTest extends TestCase {
         assertEquals(errorCode, event.getValue().errorCode);
     }
 
-
     @Test
     public void testStopScanAction() throws Exception {
         mScanner.mStopScanAction.run();
 
         verify(mAndroidScanner, times(1)).stopScan(mScanner.mScanCallback);
     }
-
 
     @Test
     public void testScanForBleDevices() throws Exception {

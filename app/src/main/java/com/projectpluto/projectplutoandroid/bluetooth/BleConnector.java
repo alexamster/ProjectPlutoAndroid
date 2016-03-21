@@ -2,7 +2,6 @@ package com.projectpluto.projectplutoandroid.bluetooth;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 
@@ -42,6 +41,7 @@ public class BleConnector {
             }
         }
     };
+    protected BleCommunicator mBleCommunicator = new BleCommunicator(mConnectionListener);
 
     public BleConnector(Context context) {
         mContext = context;
@@ -55,7 +55,7 @@ public class BleConnector {
 
 
     public void connect(BluetoothDevice device, boolean autoConnect) {
-        device.connectGatt(mContext, autoConnect, new BluetoothGattCallback() {});
+        device.connectGatt(mContext, autoConnect, mBleCommunicator);
     }
 
     public void disconnect(BluetoothGatt gatt) {
