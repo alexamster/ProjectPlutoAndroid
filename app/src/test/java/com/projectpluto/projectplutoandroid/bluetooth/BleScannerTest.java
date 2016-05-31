@@ -17,7 +17,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -51,11 +52,13 @@ public class BleScannerTest extends TestCase {
                 = ArgumentCaptor.forClass(BleScanner.ScanResultEvent.class);
 
         ScanResult result = mock(ScanResult.class);
-        when(result.getDevice()).thenReturn(mock(BluetoothDevice.class));
+        BluetoothDevice device = mock(BluetoothDevice.class);
+        when(result.getDevice()).thenReturn(device);
+        when(device.getAddress()).thenReturn("EB:22:19:0E:B2:01");
         mScanner.mScanCallback.onScanResult(1, result);
 
         verify(mBus, times(1)).post(event.capture());
-        assertTrue(event.getValue().results.contains(result));
+        assertEquals(event.getValue().addressToResult.get("EB:22:19:0E:B2:01"), result);
     }
 
     @Test
@@ -80,15 +83,15 @@ public class BleScannerTest extends TestCase {
     @Test
     public void testScanForBleDevices() throws Exception {
         ScanResult savedResult = mock(ScanResult.class);
-        HashSet<ScanResult> resultSet = new HashSet<>();
-        resultSet.add(savedResult);
-        mScanner.mScanResultSet = resultSet;
+        Map<String, ScanResult> resultMap = new HashMap<>();
+        resultMap.put("EB:22:19:0E:B2:01", savedResult);
+        mScanner.mAddressToScanResult = resultMap;
 
         mScanner.scanForBleDevices();
 
         verify(mHandler, times(1)).removeCallbacks(mScanner.mStopScanAction);
         verify(mAndroidScanner, times(1)).stopScan(mScanner.mScanCallback);
-        assertTrue(resultSet.size() == 0); // make sure saved result was cleared
+        assertTrue(resultMap.size() == 0); // make sure saved result was cleared
 
         verify(mAndroidScanner, times(1)).startScan(mScanner.mScanCallback);
         verify(mHandler, times(1))

@@ -11,9 +11,9 @@ import android.os.Handler;
 import com.projectpluto.projectplutoandroid.core.BusProvider;
 import com.squareup.otto.Bus;
 
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import timber.log.Timber;
 
@@ -27,7 +27,7 @@ public class BleScanner {
     protected BluetoothAdapter mBluetoothAdapter;
     protected BluetoothLeScanner mBleScanner;
     protected Handler mHandler = new Handler();
-    protected Set<ScanResult> mScanResultSet = new HashSet<>();
+    protected Map<String, ScanResult> mAddressToScanResult = new HashMap<>();
 
     public BleScanner(Context context) {
         BluetoothManager bluetoothManager =
@@ -44,8 +44,8 @@ public class BleScanner {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             Timber.d("Received scan result for device: %s", result.getDevice().getName());
-            mScanResultSet.add(result);
-            mBus.post(new ScanResultEvent(mScanResultSet));
+            mAddressToScanResult.put(result.getDevice().getAddress(), result);
+            mBus.post(new ScanResultEvent(mAddressToScanResult));
         }
 
         @Override
@@ -89,17 +89,17 @@ public class BleScanner {
     public void stopBleScan() {
         mHandler.removeCallbacks(mStopScanAction);
         mBleScanner.stopScan(mScanCallback);
-        mScanResultSet.clear();
+        mAddressToScanResult.clear();
     }
 
     /**
      * results = All ScanResults that have been found so far in the current scan.
      */
     public static class ScanResultEvent {
-        public final Set<ScanResult> results;
+        public final Map<String, ScanResult> addressToResult;
 
-        public ScanResultEvent(Set<ScanResult> results) {
-            this.results = results;
+        public ScanResultEvent(Map<String, ScanResult> results) {
+            this.addressToResult = results;
         }
     }
 
