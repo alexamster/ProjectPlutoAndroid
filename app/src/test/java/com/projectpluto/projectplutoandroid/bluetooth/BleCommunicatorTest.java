@@ -53,7 +53,7 @@ public class BleCommunicatorTest extends TestCase {
     byte[] data = new byte[2];
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         doReturn(mock(BluetoothDevice.class)).when(gatt).getDevice();
         bleCommunicator.mRequestQueue = new LinkedBlockingQueue<>();
@@ -76,7 +76,7 @@ public class BleCommunicatorTest extends TestCase {
     }
 
     @Test
-    public void testConstructor() throws Exception {
+    public void testConstructor() {
         IBleConnectionStateListener listener = new IBleConnectionStateListener() {
             @Override
             public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {}

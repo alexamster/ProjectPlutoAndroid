@@ -14,7 +14,7 @@ import timber.log.Timber;
 public class ProjectPlutoApplicationTest extends TestCase {
 
     @Test
-    public void testLoggerDebug() throws Exception {
+    public void testLoggerDebug() {
         ProjectPlutoApplication app = new ProjectPlutoApplication();
         Timber.uprootAll();
 
@@ -24,7 +24,7 @@ public class ProjectPlutoApplicationTest extends TestCase {
     }
 
     @Test
-    public void testLoggerProduction() throws Exception {
+    public void testLoggerProduction() {
         ProjectPlutoApplication app = new ProjectPlutoApplication();
         Timber.uprootAll();
 
