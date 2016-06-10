@@ -4,15 +4,11 @@
 # sdkmanager plugin to fail, so we will just use the java language VM.
 language: java
 
-before_install:
- - chmod +x gradlew
+install:
 # travis provides 64 bit VM, aapt is 32 bit
 # https://github.com/JakeWharton/sdk-manager-plugin/issues/13
  - sudo apt-get update -qq
- - sudo apt-get install -qq libstdc++6:i386 lib32z1 expect
-
-# no install step required, everything is handled in script.
-install: true
+ - sudo apt-get install -qq libstdc++6:i386 lib32z1
 
 script:
  - ./gradlew lint test assembleDebug
