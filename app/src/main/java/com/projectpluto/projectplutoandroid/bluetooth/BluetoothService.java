@@ -1,11 +1,13 @@
 package com.projectpluto.projectplutoandroid.bluetooth;
 
 import android.app.Service;
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 
 import com.projectpluto.projectplutoandroid.core.Permissions;
+import com.projectpluto.projectplutoandroid.models.PlutoColor;
 
 import timber.log.Timber;
 
@@ -13,6 +15,8 @@ public class BluetoothService extends Service {
     // Member vars are not private/final so that they can be easily mocked for testing.
     protected BluetoothServiceBinder mBinder = new BluetoothServiceBinder();
     protected BleScanner mBleScanner;
+    protected BleConnector mBleConnector = new BleConnector(this);
+    protected PlutoCommunicator mPluto = new PlutoCommunicator(mBleConnector.mBleCommunicator);
 
     /**
      * Class for clients to access. Because we know this service always runs in
@@ -57,5 +61,19 @@ public class BluetoothService extends Service {
      */
     public void stopBleScan() {
         mBleScanner.stopBleScan();
+    }
+
+    /**
+     * Connects to specified device. Multiple devices may be connected to at the same time
+     */
+    public void connect(BluetoothDevice device, boolean autoConnect) {
+        mBleConnector.connect(device, autoConnect);
+    }
+
+    /**
+     * Changes color of all connected pluto devices
+     */
+    public void changeColor(PlutoColor color, BleResultHandler handler) {
+        mPluto.changeColor(color, handler);
     }
 }
