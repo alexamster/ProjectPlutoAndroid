@@ -31,27 +31,27 @@ import static org.mockito.Mockito.verify;
 public class BleConnectorTest extends TestCase {
     @Mock Bus bus;
 
-    protected void setUp() throws Exception {
+    protected void setUp() {
         MockitoAnnotations.initMocks(this);
         PowerMockito.mockStatic(BusProvider.class);
         PowerMockito.when(BusProvider.getInstance()).thenReturn(bus);
     }
 
     @Test
-    public void testRegisterOnCreate() throws Exception {
+    public void testRegisterOnCreate() {
         BleConnector connector = new BleConnector(mock(Context.class));
         verify(bus, times(1)).register(connector);
     }
 
     @Test
-    public void testProduceDevices() throws Exception {
+    public void testProduceDevices() {
         BleConnector connector = new BleConnector(mock(Context.class));
         BleConnector.BleDevicesChangedEvent event = connector.produceCurrentConnections();
         assertEquals(event.connectedGatts, connector.mConnectedDevices);
     }
 
     @Test
-    public void testConnect() throws Exception {
+    public void testConnect() {
         BleConnector connector = new BleConnector(mock(Context.class));
         BluetoothDevice device = mock(BluetoothDevice.class);
         connector.connect(device, false);
@@ -61,7 +61,7 @@ public class BleConnectorTest extends TestCase {
     }
 
     @Test
-    public void testDisconnect() throws Exception {
+    public void testDisconnect() {
         BleConnector connector = new BleConnector(mock(Context.class));
         BluetoothGatt gatt = mock(BluetoothGatt.class);
         connector.disconnect(gatt);
@@ -69,7 +69,7 @@ public class BleConnectorTest extends TestCase {
     }
 
     @Test
-    public void testConnectionStateChangeConnected() throws Exception {
+    public void testConnectionStateChangeConnected() {
         BleConnector connector = new BleConnector(mock(Context.class));
         BluetoothGatt gatt = mock(BluetoothGatt.class);
         connector.mConnectionListener.onConnectionStateChange(gatt, 0, BluetoothProfile.STATE_CONNECTED);
@@ -83,7 +83,7 @@ public class BleConnectorTest extends TestCase {
     }
 
     @Test
-    public void testConnectionStateChangeDisconnected() throws Exception {
+    public void testConnectionStateChangeDisconnected() {
         BleConnector connector = new BleConnector(mock(Context.class));
         BluetoothGatt gatt = mock(BluetoothGatt.class);
         connector.mConnectedDevices.add(gatt);

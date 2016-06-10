@@ -34,7 +34,7 @@ public class BleScannerTest extends TestCase {
     @Mock Bus mBus;
     @Mock Handler mHandler;
 
-    protected void setUp() throws Exception {
+    protected void setUp() {
         MockitoAnnotations.initMocks(this);
         // mock out the bluetooth services, otherwise we will get NPE in BleScanner constructor
         when(mContext.getSystemService(Context.BLUETOOTH_SERVICE)).thenReturn(mBtManager);
@@ -47,7 +47,7 @@ public class BleScannerTest extends TestCase {
     }
 
     @Test
-    public void testScanResult() throws Exception {
+    public void testScanResult() {
         ArgumentCaptor<BleScanner.ScanResultEvent> event
                 = ArgumentCaptor.forClass(BleScanner.ScanResultEvent.class);
 
@@ -62,7 +62,7 @@ public class BleScannerTest extends TestCase {
     }
 
     @Test
-    public void testScanError() throws Exception {
+    public void testScanError() {
         ArgumentCaptor<BleScanner.ScanFailureEvent> event
                 = ArgumentCaptor.forClass(BleScanner.ScanFailureEvent.class);
 
@@ -74,14 +74,14 @@ public class BleScannerTest extends TestCase {
     }
 
     @Test
-    public void testStopScanAction() throws Exception {
+    public void testStopScanAction() {
         mScanner.mStopScanAction.run();
 
         verify(mAndroidScanner, times(1)).stopScan(mScanner.mScanCallback);
     }
 
     @Test
-    public void testScanForBleDevices() throws Exception {
+    public void testScanForBleDevices() {
         ScanResult savedResult = mock(ScanResult.class);
         Map<String, ScanResult> resultMap = new HashMap<>();
         resultMap.put("EB:22:19:0E:B2:01", savedResult);
@@ -99,7 +99,7 @@ public class BleScannerTest extends TestCase {
     }
 
     @Test
-    public void testStopBleScan() throws Exception {
+    public void testStopBleScan() {
         mScanner.stopBleScan();
 
         verify(mAndroidScanner, times(1)).stopScan(mScanner.mScanCallback);

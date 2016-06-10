@@ -60,7 +60,7 @@ public class PlutoCommunicatorTest extends TestCase {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testRegistersProducer() throws Exception {
+    public void testRegistersProducer() {
         // Only one producer is allowed to be registered per event. Since we created the
         // PlutoCommunicator in setUp(), attempting to register another should throw
         // IllegalArgumentException
@@ -68,7 +68,7 @@ public class PlutoCommunicatorTest extends TestCase {
     }
 
     @Test
-    public void testOnBleDevicesChanged() throws Exception {
+    public void testOnBleDevicesChanged() {
         assertEquals(0, communicator.mPlutoGatts.size());
 
         Set<BluetoothGatt> devices = new HashSet<>();
@@ -80,7 +80,7 @@ public class PlutoCommunicatorTest extends TestCase {
     }
 
     @Test
-    public void testOnColorBleRead() throws Exception {
+    public void testOnColorBleRead() {
         BluetoothGattCharacteristic characteristic = mock(BluetoothGattCharacteristic.class);
         byte[] color = getTestColor();
 
@@ -96,7 +96,7 @@ public class PlutoCommunicatorTest extends TestCase {
     }
 
     @Test
-    public void testOtherCharChanged() throws Exception {
+    public void testOtherCharChanged() {
         byte[] color = getTestColor();
         PlutoColor plutoColor = new PlutoColor(color);
         communicator.mCurrentColor = plutoColor;
@@ -112,7 +112,7 @@ public class PlutoCommunicatorTest extends TestCase {
     }
 
     @Test
-    public void testChangeColor() throws Exception {
+    public void testChangeColor() {
         PlutoColor color = new PlutoColor(1, 2, 3);
         BluetoothGatt gatt = mock(BluetoothGatt.class);
         BluetoothGattService service = mock(BluetoothGattService.class);
@@ -136,7 +136,7 @@ public class PlutoCommunicatorTest extends TestCase {
     }
 
     @Test
-    public void testChangeColorMultipleGatts() throws Exception {
+    public void testChangeColorMultipleGatts() {
         PlutoColor color = new PlutoColor(1, 2, 3);
         BluetoothGatt gatt = mock(BluetoothGatt.class);
         BluetoothGattService service = mock(BluetoothGattService.class);
@@ -162,7 +162,7 @@ public class PlutoCommunicatorTest extends TestCase {
     }
 
     @Test
-    public void testReadColor() throws Exception {
+    public void testReadColor() {
         BluetoothGatt gatt = mock(BluetoothGatt.class);
         BluetoothGattService service = mock(BluetoothGattService.class);
         BluetoothGattCharacteristic gattChar = mock(BluetoothGattCharacteristic.class);
@@ -184,7 +184,7 @@ public class PlutoCommunicatorTest extends TestCase {
     }
 
     @Test
-    public void testProduce() throws Exception {
+    public void testProduce() {
         PlutoColor color = new PlutoColor(1, 2, 3);
         communicator.mCurrentColor = color;
         PlutoCommunicator.ColorUpdateEvent event = communicator.produceCurrentColor();

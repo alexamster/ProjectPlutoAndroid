@@ -21,7 +21,7 @@ import static org.mockito.Mockito.mock;
 public class PermissionsTest extends TestCase {
 
     @Test
-    public void testHasPermission() throws Exception {
+    public void testHasPermission() {
         PowerMockito.mockStatic(ContextCompat.class);
         PowerMockito.when(ContextCompat.checkSelfPermission(any(Context.class), anyString()))
                 .thenReturn(PackageManager.PERMISSION_GRANTED);
@@ -29,7 +29,7 @@ public class PermissionsTest extends TestCase {
     }
 
     @Test
-    public void testDoesntHavePermission() throws Exception {
+    public void testDoesntHavePermission() {
         PowerMockito.mockStatic(ContextCompat.class);
         PowerMockito.when(ContextCompat.checkSelfPermission(any(Context.class), anyString()))
                 .thenReturn(PackageManager.PERMISSION_DENIED);

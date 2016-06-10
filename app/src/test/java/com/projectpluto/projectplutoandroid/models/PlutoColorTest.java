@@ -16,7 +16,7 @@ import org.robolectric.annotation.Config;
 @Config(constants = BuildConfig.class, sdk = 21)
 public class PlutoColorTest extends TestCase {
     @Test
-    public void testFromBytes() throws Exception {
+    public void testFromBytes() {
         byte[] data = new byte[4];
         data[0] = PlutoColor.COLOR_COMMAND;
         data[1] = 11;
@@ -32,7 +32,7 @@ public class PlutoColorTest extends TestCase {
     }
 
     @Test
-    public void testFromRgb() throws Exception {
+    public void testFromRgb() {
         PlutoColor color = new PlutoColor(11, 0, 33);
         byte[] data = color.getBytes();
 
@@ -43,12 +43,12 @@ public class PlutoColorTest extends TestCase {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testFromRgbInvalidRangeLarge() throws Exception {
+    public void testFromRgbInvalidRangeLarge() {
         PlutoColor color = new PlutoColor(11, 22, 400);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testFromRgbInvalidRangeNegative() throws Exception {
+    public void testFromRgbInvalidRangeNegative() {
         PlutoColor color = new PlutoColor(11, 22, -20);
     }
 }

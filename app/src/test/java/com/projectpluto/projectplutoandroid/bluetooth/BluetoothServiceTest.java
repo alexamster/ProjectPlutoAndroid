@@ -3,7 +3,6 @@ package com.projectpluto.projectplutoandroid.bluetooth;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
-import android.bluetooth.le.BluetoothLeScanner;
 import android.content.Context;
 import android.content.Intent;
 
@@ -11,9 +10,11 @@ import com.projectpluto.projectplutoandroid.core.Permissions;
 
 import junit.framework.TestCase;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -28,16 +29,23 @@ import static org.mockito.Mockito.when;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Permissions.class)
 public class BluetoothServiceTest extends TestCase {
+    @Mock BluetoothService btService;
+
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+    }
 
     @Test
-    public void testOnBind() throws Exception {
-        BluetoothService btService = new BluetoothService();
+    public void testOnBind() {
+        doCallRealMethod().when(btService).onBind(any(Intent.class));
+        btService.mBinder = mock(BluetoothService.BluetoothServiceBinder.class);
         assertEquals(btService.mBinder, btService.onBind(new Intent()));
     }
 
     @Test
-    public void testStartScan() throws Exception {
-        BluetoothService btService = new BluetoothService();
+    public void testStartScan() {
+        doCallRealMethod().when(btService).scanForBleDevices();
         BleScanner scanner = mock(BleScanner.class);
         btService.mBleScanner = scanner;
         btService.scanForBleDevices();
@@ -46,8 +54,8 @@ public class BluetoothServiceTest extends TestCase {
     }
 
     @Test
-    public void testStopScan() throws Exception {
-        BluetoothService btService = new BluetoothService();
+    public void testStopScan() {
+        doCallRealMethod().when(btService).stopBleScan();
         BleScanner scanner = mock(BleScanner.class);
         btService.mBleScanner = scanner;
         btService.stopBleScan();
@@ -56,7 +64,7 @@ public class BluetoothServiceTest extends TestCase {
     }
 
     @Test
-    public void testStartCommandWithPermission() throws Exception {
+    public void testStartCommandWithPermission() {
         PowerMockito.mockStatic(Permissions.class);
         PowerMockito.when(Permissions.hasCoarseLocation(any(Context.class))).thenReturn(true);
 
@@ -75,7 +83,7 @@ public class BluetoothServiceTest extends TestCase {
     }
 
     @Test
-    public void testStartCommandNoPermission() throws Exception {
+    public void testStartCommandNoPermission() {
         PowerMockito.mockStatic(Permissions.class);
         PowerMockito.when(Permissions.hasCoarseLocation(any(Context.class))).thenReturn(false);
 
