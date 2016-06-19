@@ -1,4 +1,4 @@
-package com.projectpluto.projectplutoandroid.ui.scan.common;
+package com.projectpluto.projectplutoandroid.ui.common;
 
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
@@ -16,23 +16,23 @@ public class BaseView {
         mActivity = actvity;
     }
 
-    public void toast(final int textResId, final int duration) {
+    public void toast(final String message, final int duration) {
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(mActivity, mActivity.getString(textResId), duration).show();
+                Toast.makeText(mActivity, message, duration).show();
             }
         });
     }
 
-    public void popUp(final int titleResId, final int bodyResId) {
+    public void popUp(final String title, final String body) {
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 new AlertDialog.Builder(mActivity)
-                        .setMessage(mActivity.getString(bodyResId))
+                        .setMessage(body)
                         .setPositiveButton(mActivity.getString(android.R.string.ok), null)
-                        .setTitle(mActivity.getString(titleResId))
+                        .setTitle(title)
                         .show();
             }
         });

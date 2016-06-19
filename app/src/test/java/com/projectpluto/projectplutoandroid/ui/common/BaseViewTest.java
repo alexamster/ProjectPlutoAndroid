@@ -1,11 +1,10 @@
-package com.projectpluto.projectplutoandroid.ui.scan.common;
+package com.projectpluto.projectplutoandroid.ui.common;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.projectpluto.projectplutoandroid.BuildConfig;
-import com.projectpluto.projectplutoandroid.R;
 import com.projectpluto.projectplutoandroid.ConnectActivity;
 
 import junit.framework.TestCase;
@@ -19,7 +18,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.shadows.ShadowToast;
@@ -42,13 +40,13 @@ public class BaseViewTest extends TestCase {
 
     @Test
     public void testToast() {
-        baseView.toast(R.string.app_name, Toast.LENGTH_LONG);
-        assertEquals(ShadowToast.getTextOfLatestToast(), getString(R.string.app_name));
+        baseView.toast("testMessage", Toast.LENGTH_LONG);
+        assertEquals(ShadowToast.getTextOfLatestToast(), "testMessage");
     }
 
     @Test
     public void testPopup() {
-        baseView.popUp(R.string.app_name, R.string.action_settings);
+        baseView.popUp("testTitle", "testMessage");
         assertEquals(1, ShadowDialog.getShownDialogs().size());
     }
 
@@ -60,9 +58,5 @@ public class BaseViewTest extends TestCase {
         verify(activity, times(1)).startActivity(intentCaptor.capture());
         assertEquals(BaseViewTest.class.getCanonicalName(),
                 intentCaptor.getValue().getComponent().getClassName());
-    }
-
-    protected String getString(int resId) {
-        return RuntimeEnvironment.application.getString(resId);
     }
 }
