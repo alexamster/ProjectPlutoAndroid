@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.projectpluto.projectplutoandroid.BuildConfig;
-import com.projectpluto.projectplutoandroid.ConnectActivity;
+import com.projectpluto.projectplutoandroid.ui.scan.ScanActivity;
 
 import junit.framework.TestCase;
 
@@ -35,7 +35,7 @@ public class BaseViewTest extends TestCase {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        baseView = new BaseView(Robolectric.buildActivity(ConnectActivity.class).attach().get());
+        baseView = new BaseView(Robolectric.buildActivity(ScanActivity.class).attach().get());
     }
 
     @Test
