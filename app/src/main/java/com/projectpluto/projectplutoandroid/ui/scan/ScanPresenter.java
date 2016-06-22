@@ -6,6 +6,7 @@ import android.widget.Toast;
 import com.projectpluto.projectplutoandroid.R;
 import com.projectpluto.projectplutoandroid.bluetooth.BleScanner;
 import com.projectpluto.projectplutoandroid.bluetooth.BluetoothService;
+import com.projectpluto.projectplutoandroid.ui.change_color.ChangeColorActivity;
 import com.projectpluto.projectplutoandroid.ui.common.BaseView;
 import com.squareup.otto.Subscribe;
 
@@ -48,5 +49,6 @@ public class ScanPresenter {
      */
     public void onClickConnect(ScanResult result) {
         mBtService.connect(result.getDevice(), false);
+        mBaseView.startActivity(ChangeColorActivity.class);
     }
 }

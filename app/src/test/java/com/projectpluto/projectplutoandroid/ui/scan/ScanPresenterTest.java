@@ -8,6 +8,7 @@ import com.projectpluto.projectplutoandroid.BuildConfig;
 import com.projectpluto.projectplutoandroid.R;
 import com.projectpluto.projectplutoandroid.bluetooth.BleScanner;
 import com.projectpluto.projectplutoandroid.bluetooth.BluetoothService;
+import com.projectpluto.projectplutoandroid.ui.change_color.ChangeColorActivity;
 import com.projectpluto.projectplutoandroid.ui.common.BaseView;
 
 import junit.framework.TestCase;
@@ -34,7 +35,7 @@ import static org.mockito.Mockito.verify;
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
 public class ScanPresenterTest extends TestCase {
-    @Mock BaseView activity;
+    @Mock BaseView baseView;
     @Mock BluetoothService bluetoothService;
     @Mock IScanView scanView;
     @Captor ArgumentCaptor<Collection<ScanResult>> scanResultCaptor;
@@ -43,12 +44,12 @@ public class ScanPresenterTest extends TestCase {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        presenter = new ScanPresenter(scanView, activity);
+        presenter = new ScanPresenter(scanView, baseView);
     }
 
     @Test
     public void testConstructor() {
-        assertEquals(activity, presenter.mBaseView);
+        assertEquals(baseView, presenter.mBaseView);
         assertEquals(scanView, presenter.mScanView);
     }
 
@@ -81,7 +82,7 @@ public class ScanPresenterTest extends TestCase {
         presenter.onClickStartScan();
 
         verify(bluetoothService, times(1)).scanForBleDevices();
-        verify(activity, times(1)).toast("scanString", Toast.LENGTH_LONG);
+        verify(baseView, times(1)).toast("scanString", Toast.LENGTH_LONG);
     }
 
     @Test
@@ -93,5 +94,6 @@ public class ScanPresenterTest extends TestCase {
         presenter.onClickConnect(result);
 
         verify(bluetoothService, times(1)).connect(device, false);
+        verify(baseView, times(1)).startActivity(ChangeColorActivity.class);
     }
 }
