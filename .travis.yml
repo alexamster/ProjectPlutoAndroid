@@ -11,4 +11,4 @@ install:
  - sudo apt-get install -qq libstdc++6:i386 lib32z1
 
 script:
- - ./gradlew lint test assembleDebug
+ - ./gradlew lint test testDebugUnitTestCoverage assembleDebug coveralls
