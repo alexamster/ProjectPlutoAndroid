@@ -31,9 +31,17 @@ public class BleCommunicator extends BluetoothGattCallback {
         }
     });
 
-    public BleCommunicator(IBleConnectionStateListener connectionStateListener) {
+    /**
+     * The application will always create this class with startQueueThread = true since we will
+     * always want to start processing events. When testing, often we want to add events to the
+     * queue before we start to process them. This is the only use case for startQueueThread = false
+     */
+    public BleCommunicator(IBleConnectionStateListener connectionStateListener,
+                           boolean startQueueThread) {
         mConnectionStateListener = connectionStateListener;
-        mProcessQueueThread.start();
+        if (startQueueThread) {
+            mProcessQueueThread.start();
+        }
     }
 
     public void enqueueBleRequest(BleRequest request) {
