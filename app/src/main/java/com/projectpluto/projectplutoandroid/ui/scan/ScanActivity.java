@@ -11,11 +11,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.projectpluto.projectplutoandroid.ui.common.BaseView;
-import com.projectpluto.projectplutoandroid.ui.common.BluetoothServiceActivity;
 import com.projectpluto.projectplutoandroid.R;
 import com.projectpluto.projectplutoandroid.bluetooth.BluetoothService;
 import com.projectpluto.projectplutoandroid.core.BusProvider;
+import com.projectpluto.projectplutoandroid.ui.common.BaseView;
+import com.projectpluto.projectplutoandroid.ui.common.BluetoothServiceActivity;
 import com.squareup.otto.Bus;
 
 import java.util.ArrayList;
@@ -27,8 +27,8 @@ import butterknife.ButterKnife;
 /**
  * Activity used for scanning and initiating connections to Pluto BLE devices
  *
- * It includes a button to start a scan and a list that will be populate the
- * scans result. Selecting an item on the result list will start a connection to it.
+ * It includes a button to start a scan and will list scans result. Selecting an item on the
+ * result list will initiate a connection using the selected scan result.
  */
 public class ScanActivity extends BluetoothServiceActivity implements IScanView {
     @Bind(R.id.device_list) protected ListView mDeviceList;

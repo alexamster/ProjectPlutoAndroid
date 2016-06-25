@@ -41,7 +41,11 @@ public class BleCommunicator extends BluetoothGattCallback {
     }
 
     /**
-     * Takes the next command from the queue (blocking if empty) and executes the request.
+     * Android bluetooth commands such as writeCharacteristic() are non-blocking, but if another
+     * command is run before the first command finishes it will fail. This forces us to implement
+     * a queue for bluetooth commands and only execute them after the previous command finishes.
+     *
+     * This will take the next command from the queue (blocking if empty) and executes the request.
      * If the command succeeds, processNext() will be invoked from the corresponding BLE callback
      * (such as onCharacteristicRead(...)).
      *
