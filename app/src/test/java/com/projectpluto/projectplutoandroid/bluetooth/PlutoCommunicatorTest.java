@@ -5,13 +5,11 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 
 import com.projectpluto.projectplutoandroid.BuildConfig;
-import com.projectpluto.projectplutoandroid.core.BusProvider;
 import com.projectpluto.projectplutoandroid.models.PlutoColor;
 import com.squareup.otto.Bus;
 
 import junit.framework.TestCase;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,21 +48,6 @@ public class PlutoCommunicatorTest extends TestCase {
         communicator = new PlutoCommunicator(bleCommunicator);
         communicator.mBus = bus;
         thrownException = null;
-    }
-
-    @After
-    public void tearDown() {
-        // we must unregister communicator after each test because there can only be one
-        // produce for ColorUpdateEvent registered at a time
-        BusProvider.getInstance().unregister(communicator);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testRegistersProducer() {
-        // Only one producer is allowed to be registered per event. Since we created the
-        // PlutoCommunicator in setUp(), attempting to register another should throw
-        // IllegalArgumentException
-        new PlutoCommunicator(mock(BleCommunicator.class));
     }
 
     @Test

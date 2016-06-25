@@ -6,8 +6,10 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 
+import com.projectpluto.projectplutoandroid.core.BusProvider;
 import com.projectpluto.projectplutoandroid.core.Permissions;
 import com.projectpluto.projectplutoandroid.models.PlutoColor;
+import com.squareup.otto.Bus;
 
 import timber.log.Timber;
 
@@ -17,6 +19,7 @@ public class BluetoothService extends Service {
     protected BleScanner mBleScanner;
     protected BleConnector mBleConnector = new BleConnector(this);
     protected PlutoCommunicator mPluto = new PlutoCommunicator(mBleConnector.mBleCommunicator);
+    protected Bus mBus = BusProvider.getInstance();
 
     /**
      * Class for clients to access. Because we know this service always runs in
@@ -34,6 +37,14 @@ public class BluetoothService extends Service {
     }
 
     @Override
+    public void onCreate() {
+        super.onCreate();
+
+        mBus.register(mBleConnector);
+        mBus.register(mPluto);
+    }
+
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Timber.i("onStartCommand() intent: %s flags: %d startId: %d", intent, flags, startId);
 
@@ -45,6 +56,14 @@ public class BluetoothService extends Service {
 
         mBleScanner = new BleScanner(BluetoothService.this);
         return Service.START_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        mBus.unregister(mBleConnector);
+        mBus.unregister(mPluto);
     }
 
     /**

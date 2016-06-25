@@ -36,7 +36,6 @@ public class PlutoCommunicator {
 
     public PlutoCommunicator(BleCommunicator communicator) {
         mCommunicator = communicator;
-        mBus.register(PlutoCommunicator.this);
     }
 
     @Subscribe

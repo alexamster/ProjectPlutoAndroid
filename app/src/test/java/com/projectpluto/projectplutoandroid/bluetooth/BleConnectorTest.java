@@ -38,12 +38,6 @@ public class BleConnectorTest extends TestCase {
     }
 
     @Test
-    public void testRegisterOnCreate() {
-        BleConnector connector = new BleConnector(mock(Context.class));
-        verify(bus, times(1)).register(connector);
-    }
-
-    @Test
     public void testProduceDevices() {
         BleConnector connector = new BleConnector(mock(Context.class));
         BleConnector.BleDevicesChangedEvent event = connector.produceCurrentConnections();
