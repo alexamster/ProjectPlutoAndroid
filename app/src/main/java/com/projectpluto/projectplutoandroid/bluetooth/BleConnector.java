@@ -41,7 +41,7 @@ public class BleConnector {
             }
         }
     };
-    protected BleCommunicator mBleCommunicator = new BleCommunicator(mConnectionListener);
+    protected BleCommunicator mBleCommunicator = new BleCommunicator(mConnectionListener, true);
 
     public BleConnector(Context context) {
         mContext = context;

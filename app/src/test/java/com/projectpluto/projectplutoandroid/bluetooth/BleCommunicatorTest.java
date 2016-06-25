@@ -21,11 +21,8 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.util.UUID;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -37,7 +34,7 @@ import static org.mockito.Mockito.when;
 // is the same value as BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
 @Config(constants = BuildConfig.class, sdk = 21)
 public class BleCommunicatorTest extends TestCase {
-    @Mock BleCommunicator bleCommunicator;
+    BleCommunicator bleCommunicator;
     @Mock BluetoothGatt gatt;
     @Mock BluetoothGattCharacteristic characteristic;
     @Mock BluetoothGattDescriptor descriptor;
@@ -51,13 +48,22 @@ public class BleCommunicatorTest extends TestCase {
     @Captor ArgumentCaptor<BleCommunicator.CharacteristicReadEvent> readCaptor;
     @Captor ArgumentCaptor<BleCommunicator.CharacteristicWriteEvent> writeCaptor;
     byte[] data = new byte[2];
+    boolean didCallProcessNext;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         doReturn(mock(BluetoothDevice.class)).when(gatt).getDevice();
-        bleCommunicator.mRequestQueue = new LinkedBlockingQueue<>();
-        bleCommunicator.mConnectionStateListener = connectionStateListener;
+
+        didCallProcessNext = false;
+        bleCommunicator = new BleCommunicator(connectionStateListener, false) {
+            // processNext is blocking, so we will mock it out for the majority of tests. Tests for
+            // this method will create a new BleCommunicator without overriding.
+            @Override
+            protected void processNext() {
+                didCallProcessNext = true;
+            }
+        };
         bleCommunicator.mBus = bus;
     }
 
@@ -81,13 +87,12 @@ public class BleCommunicatorTest extends TestCase {
             @Override
             public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {}
         };
-        BleCommunicator bleCommunicator = new BleCommunicator(listener);
+        BleCommunicator bleCommunicator = new BleCommunicator(listener, false);
         assertEquals(bleCommunicator.mConnectionStateListener, listener);
     }
 
     @Test
     public void testEnqueueBleRequst() {
-        doCallRealMethod().when(bleCommunicator).enqueueBleRequest(any(BleRequest.class));
         BleRequest request = getBleRequest(BleRequest.RequestType.READ);
         bleCommunicator.enqueueBleRequest(request);
 
@@ -102,8 +107,8 @@ public class BleCommunicatorTest extends TestCase {
     @Test
     @SuppressWarnings("unchecked")
     public void testProcessNextReadRequestSuccess() {
+        bleCommunicator = new BleCommunicator(connectionStateListener, false);
         bleCommunicator.mRequestQueue.add(getBleRequest(BleRequest.RequestType.READ));
-        doCallRealMethod().when(bleCommunicator).processNext();
         doReturn(true).when(gatt).readCharacteristic(characteristic);
         bleCommunicator.processNext();
 
@@ -114,8 +119,8 @@ public class BleCommunicatorTest extends TestCase {
     @Test
     @SuppressWarnings("unchecked")
     public void testProcessNextWriteRequestSuccess() {
+        bleCommunicator = new BleCommunicator(connectionStateListener, false);
         bleCommunicator.mRequestQueue.add(getBleRequest(BleRequest.RequestType.WRITE));
-        doCallRealMethod().when(bleCommunicator).processNext();
         doReturn(true).when(gatt).writeCharacteristic(characteristic);
         bleCommunicator.processNext();
 
@@ -127,8 +132,8 @@ public class BleCommunicatorTest extends TestCase {
     @Test
     @SuppressWarnings("unchecked")
     public void testProcessNextSubscribeRequestSuccess() {
+        bleCommunicator = new BleCommunicator(connectionStateListener, false);
         bleCommunicator.mRequestQueue.add(getBleRequest(BleRequest.RequestType.SUBSCRIBE));
-        doCallRealMethod().when(bleCommunicator).processNext();
         doReturn(descriptor).when(characteristic).getDescriptor(any(UUID.class));
         doReturn(true).when(gatt).writeDescriptor(descriptor);
         doReturn(true).when(descriptor).setValue(any(byte[].class));
@@ -142,8 +147,8 @@ public class BleCommunicatorTest extends TestCase {
     @Test
     @SuppressWarnings("unchecked")
     public void testProcessNextUnsubscribeRequestSuccess() {
+        bleCommunicator = new BleCommunicator(connectionStateListener, false);
         bleCommunicator.mRequestQueue.add(getBleRequest(BleRequest.RequestType.UNSUBSCRIBE));
-        doCallRealMethod().when(bleCommunicator).processNext();
         doReturn(descriptor).when(characteristic).getDescriptor(any(UUID.class));
         doReturn(true).when(gatt).writeDescriptor(descriptor);
         doReturn(true).when(descriptor).setValue(any(byte[].class));
@@ -157,9 +162,9 @@ public class BleCommunicatorTest extends TestCase {
     @Test
     @SuppressWarnings("unchecked")
     public void testProcessNextReadRequestErrorThenSuccess() {
+        bleCommunicator = new BleCommunicator(connectionStateListener, false);
         bleCommunicator.mRequestQueue.add(getBleRequest(BleRequest.RequestType.READ));
         bleCommunicator.mRequestQueue.add(getBleRequest(BleRequest.RequestType.READ));
-        doCallRealMethod().when(bleCommunicator).processNext();
         when(gatt.readCharacteristic(characteristic))
                 .thenReturn(false)
                 .thenReturn(true);
@@ -168,14 +173,10 @@ public class BleCommunicatorTest extends TestCase {
         verify(handler, times(1)).onError();
         verify(handler, times(1)).onSuccess();
         verify(gatt, times(2)).readCharacteristic(characteristic);
-        verify(bleCommunicator, times(2)).processNext();
     }
 
     @Test
     public void testOnConnectionStateChanged() {
-        doCallRealMethod().when(bleCommunicator).onConnectionStateChange(any(BluetoothGatt.class),
-                anyInt(),
-                anyInt());
         bleCommunicator.onConnectionStateChange(gatt, 1, 1);
 
         verify(connectionStateListener, times(1)).onConnectionStateChange(gatt, 1, 1);
@@ -183,8 +184,6 @@ public class BleCommunicatorTest extends TestCase {
 
     @Test
     public void testOnServicesDiscovered() {
-        doCallRealMethod().when(bleCommunicator).onServicesDiscovered(any(BluetoothGatt.class),
-                anyInt());
         bleCommunicator.onServicesDiscovered(gatt, 1);
 
         verify(bus, times(1)).post(discoveredCaptor.capture());
@@ -195,30 +194,27 @@ public class BleCommunicatorTest extends TestCase {
 
     @Test
     public void testOnDescriptorWrite() {
-        doCallRealMethod().when(bleCommunicator).onDescriptorWrite(gatt, descriptor, 1);
         bleCommunicator.onDescriptorWrite(gatt, descriptor, 1);
 
         verify(bus, times(1)).post(descWriteCaptor.capture());
-
         assertEquals(descWriteCaptor.getValue().gatt, gatt);
         assertEquals(descWriteCaptor.getValue().descriptor, descriptor);
         assertEquals(descWriteCaptor.getValue().status, 1);
+        assertTrue(didCallProcessNext);
     }
 
     @Test
     public void testOnCharacteristicChanged() {
-        doCallRealMethod().when(bleCommunicator).onCharacteristicChanged(gatt, characteristic);
         bleCommunicator.onCharacteristicChanged(gatt, characteristic);
 
         verify(bus, times(1)).post(charaChangedCaptor.capture());
-
         assertEquals(charaChangedCaptor.getValue().gatt, gatt);
         assertEquals(charaChangedCaptor.getValue().characteristic, characteristic);
+        assertTrue(didCallProcessNext);
     }
 
     @Test
     public void testOnCharacteristicRead() {
-        doCallRealMethod().when(bleCommunicator).onCharacteristicRead(gatt, characteristic, 1);
         bleCommunicator.onCharacteristicRead(gatt, characteristic, 1);
 
         verify(bus, times(1)).post(readCaptor.capture());
@@ -226,11 +222,11 @@ public class BleCommunicatorTest extends TestCase {
         assertEquals(readCaptor.getValue().gatt, gatt);
         assertEquals(readCaptor.getValue().characteristic, characteristic);
         assertEquals(readCaptor.getValue().status, 1);
+        assertTrue(didCallProcessNext);
     }
 
     @Test
     public void testOnCharacteristicWrite() {
-        doCallRealMethod().when(bleCommunicator).onCharacteristicWrite(gatt, characteristic, 1);
         bleCommunicator.onCharacteristicWrite(gatt, characteristic, 1);
 
         verify(bus, times(1)).post(writeCaptor.capture());
@@ -238,5 +234,6 @@ public class BleCommunicatorTest extends TestCase {
         assertEquals(writeCaptor.getValue().gatt, gatt);
         assertEquals(writeCaptor.getValue().characteristic, characteristic);
         assertEquals(writeCaptor.getValue().status, 1);
+        assertTrue(didCallProcessNext);
     }
 }
