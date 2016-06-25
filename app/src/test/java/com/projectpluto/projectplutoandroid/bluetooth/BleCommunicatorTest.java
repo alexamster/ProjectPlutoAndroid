@@ -23,8 +23,10 @@ import org.robolectric.annotation.Config;
 import java.util.UUID;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -48,22 +50,13 @@ public class BleCommunicatorTest extends TestCase {
     @Captor ArgumentCaptor<BleCommunicator.CharacteristicReadEvent> readCaptor;
     @Captor ArgumentCaptor<BleCommunicator.CharacteristicWriteEvent> writeCaptor;
     byte[] data = new byte[2];
-    boolean didCallProcessNext;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         doReturn(mock(BluetoothDevice.class)).when(gatt).getDevice();
-
-        didCallProcessNext = false;
-        bleCommunicator = new BleCommunicator(connectionStateListener, false) {
-            // processNext is blocking, so we will mock it out for the majority of tests. Tests for
-            // this method will create a new BleCommunicator without overriding.
-            @Override
-            protected void processNext() {
-                didCallProcessNext = true;
-            }
-        };
+        bleCommunicator = spy(new BleCommunicator(connectionStateListener, false));
+        doNothing().when(bleCommunicator).processNext();
         bleCommunicator.mBus = bus;
     }
 
@@ -194,13 +187,14 @@ public class BleCommunicatorTest extends TestCase {
 
     @Test
     public void testOnDescriptorWrite() {
+
         bleCommunicator.onDescriptorWrite(gatt, descriptor, 1);
 
         verify(bus, times(1)).post(descWriteCaptor.capture());
+        verify(bleCommunicator, times(1)).processNext();
         assertEquals(descWriteCaptor.getValue().gatt, gatt);
         assertEquals(descWriteCaptor.getValue().descriptor, descriptor);
         assertEquals(descWriteCaptor.getValue().status, 1);
-        assertTrue(didCallProcessNext);
     }
 
     @Test
@@ -208,9 +202,9 @@ public class BleCommunicatorTest extends TestCase {
         bleCommunicator.onCharacteristicChanged(gatt, characteristic);
 
         verify(bus, times(1)).post(charaChangedCaptor.capture());
+        verify(bleCommunicator, times(1)).processNext();
         assertEquals(charaChangedCaptor.getValue().gatt, gatt);
         assertEquals(charaChangedCaptor.getValue().characteristic, characteristic);
-        assertTrue(didCallProcessNext);
     }
 
     @Test
@@ -218,11 +212,10 @@ public class BleCommunicatorTest extends TestCase {
         bleCommunicator.onCharacteristicRead(gatt, characteristic, 1);
 
         verify(bus, times(1)).post(readCaptor.capture());
-
+        verify(bleCommunicator, times(1)).processNext();
         assertEquals(readCaptor.getValue().gatt, gatt);
         assertEquals(readCaptor.getValue().characteristic, characteristic);
         assertEquals(readCaptor.getValue().status, 1);
-        assertTrue(didCallProcessNext);
     }
 
     @Test
@@ -230,10 +223,9 @@ public class BleCommunicatorTest extends TestCase {
         bleCommunicator.onCharacteristicWrite(gatt, characteristic, 1);
 
         verify(bus, times(1)).post(writeCaptor.capture());
-
+        verify(bleCommunicator, times(1)).processNext();
         assertEquals(writeCaptor.getValue().gatt, gatt);
         assertEquals(writeCaptor.getValue().characteristic, characteristic);
         assertEquals(writeCaptor.getValue().status, 1);
-        assertTrue(didCallProcessNext);
     }
 }
