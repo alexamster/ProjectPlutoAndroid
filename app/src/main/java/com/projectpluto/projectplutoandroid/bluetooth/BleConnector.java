@@ -45,7 +45,6 @@ public class BleConnector {
 
     public BleConnector(Context context) {
         mContext = context;
-        mBus.register(BleConnector.this);
     }
 
     @Produce

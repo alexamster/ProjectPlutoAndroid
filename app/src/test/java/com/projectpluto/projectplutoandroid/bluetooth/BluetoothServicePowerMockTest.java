@@ -2,13 +2,10 @@ package com.projectpluto.projectplutoandroid.bluetooth;
 
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
-import android.content.Intent;
 
 import com.projectpluto.projectplutoandroid.core.Permissions;
-import com.projectpluto.projectplutoandroid.models.PlutoColor;
 
 import junit.framework.TestCase;
 
@@ -30,39 +27,12 @@ import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Permissions.class)
-public class BluetoothServiceTest extends TestCase {
+public class BluetoothServicePowerMockTest extends TestCase {
     @Mock BluetoothService btService;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-    }
-
-    @Test
-    public void testOnBind() {
-        doCallRealMethod().when(btService).onBind(any(Intent.class));
-        btService.mBinder = mock(BluetoothService.BluetoothServiceBinder.class);
-        assertEquals(btService.mBinder, btService.onBind(new Intent()));
-    }
-
-    @Test
-    public void testStartScan() {
-        doCallRealMethod().when(btService).scanForBleDevices();
-        BleScanner scanner = mock(BleScanner.class);
-        btService.mBleScanner = scanner;
-        btService.scanForBleDevices();
-
-        verify(scanner, times(1)).scanForBleDevices();
-    }
-
-    @Test
-    public void testStopScan() {
-        doCallRealMethod().when(btService).stopBleScan();
-        BleScanner scanner = mock(BleScanner.class);
-        btService.mBleScanner = scanner;
-        btService.stopBleScan();
-
-        verify(scanner, times(1)).stopBleScan();
     }
 
     @Test
@@ -93,36 +63,5 @@ public class BluetoothServiceTest extends TestCase {
 
         verify(btService, times(1)).stopSelf();
         assertEquals(Service.START_NOT_STICKY, result);
-    }
-
-    @Test
-    public void testConnect() {
-        btService.mBleConnector = mock(BleConnector.class);
-        BluetoothDevice device = mock(BluetoothDevice.class);
-        doCallRealMethod().when(btService).connect(device, false);
-        btService.connect(device, false);
-
-        verify(btService.mBleConnector, times(1)).connect(device, false);
-    }
-
-    @Test
-    public void testChangeColor() {
-        PlutoColor color = new PlutoColor(1, 2, 3);
-        BleResultHandler handler = mock(BleResultHandler.class);
-        btService.mPluto = mock(PlutoCommunicator.class);
-        doCallRealMethod().when(btService).changeColor(color, handler);
-        btService.changeColor(color, handler);
-
-        verify(btService.mPluto, times(1)).changeColor(color, handler);
-    }
-
-    @Test
-    public void testReadColor() {
-        BleResultHandler handler = mock(BleResultHandler.class);
-        btService.mPluto = mock(PlutoCommunicator.class);
-        doCallRealMethod().when(btService).readColor(handler);
-        btService.readColor(handler);
-
-        verify(btService.mPluto, times(1)).readColor(handler);
     }
 }
