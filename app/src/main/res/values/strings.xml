@@ -3,4 +3,6 @@
     <string name="action_settings">Settings</string>
     <string name="service_exit_error">Bluetooth service quit unexpectedly. Try restarting the application</string>
     <string name="scanning">Scanning for Pluto devices…</string>
+    <string name="read_color_error">Unable to read color from pluto device.</string>
+    <string name="change_color_error">Unable to change color</string>
 </resources>

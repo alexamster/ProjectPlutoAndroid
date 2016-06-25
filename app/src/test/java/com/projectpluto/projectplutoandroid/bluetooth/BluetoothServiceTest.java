@@ -115,4 +115,14 @@ public class BluetoothServiceTest extends TestCase {
 
         verify(btService.mPluto, times(1)).changeColor(color, handler);
     }
+
+    @Test
+    public void testReadColor() {
+        BleResultHandler handler = mock(BleResultHandler.class);
+        btService.mPluto = mock(PlutoCommunicator.class);
+        doCallRealMethod().when(btService).readColor(handler);
+        btService.readColor(handler);
+
+        verify(btService.mPluto, times(1)).readColor(handler);
+    }
 }

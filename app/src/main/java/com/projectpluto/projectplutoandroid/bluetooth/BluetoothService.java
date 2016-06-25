@@ -76,4 +76,11 @@ public class BluetoothService extends Service {
     public void changeColor(PlutoColor color, BleResultHandler handler) {
         mPluto.changeColor(color, handler);
     }
+
+    /**
+     * Read color from pluto device (if connected to multiple, first device will be read)
+     */
+    public void readColor(BleResultHandler handler) {
+        mPluto.readColor(handler);
+    }
 }

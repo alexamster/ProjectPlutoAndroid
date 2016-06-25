@@ -29,6 +29,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".ui.change_color.ChangeColorActivity"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+
         <service android:name="com.projectpluto.projectplutoandroid.bluetooth.BluetoothService" />
     </application>
 
